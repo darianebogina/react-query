@@ -1,5 +1,6 @@
 import {useContext, useEffect, useState} from "react";
-import {CacheContext, type CacheItem} from "../context";
+import {CacheContext, type CacheItem, inflightRequests} from "../context";
+import {getFreshData} from "../lib";
 
 type UseCustomQueryParams<T> = {
     queryKey: unknown[];
@@ -9,27 +10,32 @@ type UseCustomQueryParams<T> = {
 
 export const useCustomQuery = <T>({queryKey, queryFn, staleTime}: UseCustomQueryParams<T>) => {
     const context = useContext(CacheContext);
+    if (!context) {
+        throw new Error("Context must not be empty");
+    }
 
     const {cache, setCache} = context;
     const serializedKey = JSON.stringify(queryKey);
-    const [data, setData] = useState<T>((cache[serializedKey] !== undefined && (staleTime === undefined || Date.now() - cache[serializedKey].timestamp < staleTime)) ?
-        cache[serializedKey]?.data : null);
 
-    if (!context) {
-        return {data: null};
-    }
+    const [data, setData] = useState<T | null>(() => getFreshData({cache, serializedKey, staleTime}));
 
     useEffect(() => {
-        const cachedData = cache[serializedKey];
-        if (cachedData !== undefined && (staleTime === undefined || Date.now() - cachedData.timestamp < staleTime)) {
-            setData(cache[serializedKey].data as T);
+        const freshData = getFreshData({cache, serializedKey, staleTime});
+
+        if (freshData) {
+            setData(freshData as T);
+        } else if (inflightRequests.has(serializedKey)) {
+            inflightRequests.get(serializedKey)!.then(value => setData(value as T));
         } else {
-            queryFn().then((value) => {
+            const promise = queryFn();
+            inflightRequests.set(serializedKey, promise);
+            promise.then((value) => {
                 setData(value);
                 setCache(prev => ({
                     ...prev,
                     [serializedKey]: {data: value, timestamp: Date.now()},
                 }) as Record<string, CacheItem>);
+                inflightRequests.delete(serializedKey);
             });
         }
     }, [serializedKey]);
