@@ -10,8 +10,6 @@ type CacheContextType = {
     setCache: (setFunc: (prevCache: Record<string, CacheItem>) => Record<string, CacheItem>) => void;
 }
 
-export const inflightRequests = new Map<string, Promise<unknown>>();
-
 export const CacheContext = createContext<CacheContextType | null>(null);
 
 export function CacheProvider({children}) {
@@ -23,3 +21,6 @@ export function CacheProvider({children}) {
         </CacheContext.Provider>
     )
 }
+
+export const inflightRequests = new Map<string, Promise<unknown>>(); // для каждого кэша корректнее свой иметь, сейчас небезопасно
+export const subscribers = new Map<string, Set<() => void>>();
