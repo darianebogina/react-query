@@ -1,4 +1,4 @@
-import {List} from "../widgets/list";
+import {List} from "@widgets/list";
 import {useState} from "react";
 import styles from './styles.module.css';
 

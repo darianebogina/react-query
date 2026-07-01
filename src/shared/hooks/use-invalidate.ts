@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import {CacheContext, inflightRequests, subscribers} from "../context";
+import {CacheContext, inflightRequests, subscribers} from "@shared/context";
 
 export const useInvalidate = () => {
     const context = useContext(CacheContext);

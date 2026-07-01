@@ -1,4 +1,4 @@
-import {createContext, useState} from "react";
+import {createContext, type ReactNode, useState} from "react";
 
 export type CacheItem = {
     data: unknown;
@@ -12,7 +12,7 @@ type CacheContextType = {
 
 export const CacheContext = createContext<CacheContextType | null>(null);
 
-export function CacheProvider({children}) {
+export function CacheProvider({children}: {children: ReactNode}) {
     const [cache, setCache] = useState<Record<string, CacheItem>>({});
 
     return (

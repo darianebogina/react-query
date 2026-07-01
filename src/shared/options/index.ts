@@ -1,4 +1,4 @@
-import {getApi} from '../requests';
+import {getApi} from '@shared/requests';
 
 export const POSTS_QUERY_KEY = 'posts';
 

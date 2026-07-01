@@ -1,4 +1,4 @@
-import type {CacheItem} from "../context";
+import type {CacheItem} from "@shared/context";
 
 type getFreshDataParams = {
     cache: Record<string, CacheItem>;

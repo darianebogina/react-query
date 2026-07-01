@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
-import {CacheContext, type CacheItem, inflightRequests, subscribers} from "../context";
-import {getFreshData} from "../lib";
+import {CacheContext, type CacheItem, inflightRequests, subscribers} from "@shared/context";
+import {getFreshData} from "@shared/lib";
 
 type UseCustomQueryParams<T> = {
     queryKey: string;

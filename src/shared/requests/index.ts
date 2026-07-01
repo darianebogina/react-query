@@ -1,4 +1,4 @@
-import type {NewPost, Post} from "../types";
+import type {NewPost, Post} from "@shared/types";
 
 const getPosts = (): Promise<Post[]> =>
     fetch('https://jsonplaceholder.typicode.com/posts')
